@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ChangePasswordDTO, ForgotPasswordDTO } from './user/dto/password.dto';
 import * as bcrypt from 'bcryptjs';
 import { MailerService } from '@nest-modules/mailer';
-import { validationError } from 'src/utils/common';
+import { validationError } from '../utils/common';
 
 @Injectable()
 export class AppService {

@@ -12,6 +12,12 @@ export class AppController {
     return this.appService.getHello();
   }
   
+  @HttpCode(HttpStatus.CREATED)
+  @Post()
+  getHello2(): string {
+    return this.appService.getHello();
+  }
+
   @HttpCode(HttpStatus.OK)
   @Post('change-password')
   async changePass(@Body() data: ChangePasswordDTO) {

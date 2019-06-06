@@ -2,8 +2,7 @@ import { Injectable, CanActivate, ExecutionContext, HttpException, HttpStatus } 
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
-export class UserGuard implements CanActivate {
-    
+export class ProductGuard implements CanActivate {
     async canActivate( context: ExecutionContext ): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
         if (!request.headers.authorization) {
@@ -19,7 +18,9 @@ export class UserGuard implements CanActivate {
         if (auth.split(' ')[0] !== 'Bearer') {
             throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
         }
+
         const token = auth.split(' ')[1];
+
         try {
             const decoded = await jwt.verify(token, 'secret');
             return decoded;
