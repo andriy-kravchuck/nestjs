@@ -5,7 +5,7 @@ import { UserEntity } from '../user/user.entity';
 export class  ProductEntity {
 
     @PrimaryGeneratedColumn('uuid')
-    productid: number;
+    productid: string;
 
     @Column({ type: 'text', nullable: false})
     productName: string;

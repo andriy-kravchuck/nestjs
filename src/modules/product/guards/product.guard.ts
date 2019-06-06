@@ -1,8 +1,27 @@
-import { Injectable, CanActivate, ExecutionContext, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable,
+        CanActivate,
+        ExecutionContext,
+        HttpException,
+        HttpStatus,
+        UnauthorizedException,
+        UnprocessableEntityException,
+        NotFoundException 
+    } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { UserEntity } from '../../user/user.entity';
+import { ProductEntity } from '../product.entity';
 
 @Injectable()
 export class ProductGuard implements CanActivate {
+    constructor(
+        @InjectRepository(UserEntity) 
+        private userRepositiry: Repository<UserEntity>,
+        @InjectRepository(ProductEntity) 
+        private productRepositiry: Repository<ProductEntity>
+    ) { }
+
     async canActivate( context: ExecutionContext ): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
         if (!request.headers.authorization) {
@@ -10,6 +29,24 @@ export class ProductGuard implements CanActivate {
         }
 
         request.user = await this.validateToken(request.headers.authorization);
+
+        if (!request.params.id) {
+            throw new NotFoundException('Product with this Id doesn\'t exist');
+        }
+
+        try {
+            const user = await this.userRepositiry.findOne(request.user.id);
+            const product = await this.productRepositiry.findOne({ where: { id: [request.params.id]}, relations: ['user']});
+
+            if (user.role === 'user') {
+                if (product.user.id !== user.id) {
+                    throw new UnauthorizedException('This product does not belong to this user')
+                }
+            }
+
+        } catch (e) {
+            throw new UnprocessableEntityException(e.message);
+        }
 
         return true;
     }

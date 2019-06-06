@@ -6,6 +6,8 @@ import { LoginUserDTO } from './dto/password.dto';
 import { UserGuard } from './guards/user.guard';
 import { UserDecorator } from './decorators/user.decorator';
 import { validationError } from '../../utils/common';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 
 @Controller('user')
@@ -14,7 +16,7 @@ export class UserController {
 
     @HttpCode(HttpStatus.OK)
     @Get()
-    @UseGuards(new UserGuard())
+    @UseGuards(UserGuard)
     async findAll(@UserDecorator() user) {
         return this.userService.findAll();
     }
