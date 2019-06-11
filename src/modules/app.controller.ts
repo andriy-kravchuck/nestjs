@@ -1,7 +1,9 @@
 import { Controller, Get, Post, Body, HttpStatus, HttpCode } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ForgotPasswordDTO, ChangePasswordDTO } from './user/dto/password.dto';
+import { ApiUseTags } from '@nestjs/swagger';
 
+@ApiUseTags('app')
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}

@@ -8,12 +8,16 @@ import { UserDecorator } from './decorators/user.decorator';
 import { validationError } from '../../utils/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
 
 
+@ApiUseTags('user')
 @Controller('user')
+
 export class UserController {
     constructor(private userService: UserService) { }
-
+    
+    @ApiBearerAuth()
     @HttpCode(HttpStatus.OK)
     @Get()
     @UseGuards(UserGuard)

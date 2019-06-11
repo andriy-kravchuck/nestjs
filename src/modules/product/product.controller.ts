@@ -8,8 +8,11 @@ import { ProductEntity } from '../product/product.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserGuard } from '../user/guards/user.guard';
+import { ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiUseTags('product')
 @Controller('product')
+@ApiBearerAuth()
 export class ProductController {
     constructor(private productService: ProductService,
         @InjectRepository(UserEntity)
