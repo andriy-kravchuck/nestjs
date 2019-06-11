@@ -1,4 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, 
+        PrimaryGeneratedColumn, 
+        Column, 
+        CreateDateColumn, 
+        ManyToOne } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 
 @Entity('products')

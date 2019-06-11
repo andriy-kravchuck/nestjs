@@ -1,9 +1,13 @@
-import { Injectable, NotFoundException, HttpCode, HttpStatus, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, 
+        NotFoundException, 
+        UnprocessableEntityException,
+    } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ProductEntity, UserEntity } from 'src/models';
+import { UserEntity } from '../user/user.entity';
+import { ProductEntity } from '../product/product.entity';
 import { Repository } from 'typeorm';
 import { CreateProductDTO, ProductRO } from './dto/product.dto';
-import { validationError } from 'src/utils/common';
+import { validationError } from '../../utils/common';
 
 
 @Injectable()
@@ -32,9 +36,9 @@ export class ProductService {
         }
     }
 
-    async findAll() : Promise<ProductRO[]>{
+    async findAll(userId: string) : Promise<ProductRO[]>{
         try {
-            const products = await this.productRepository.find({relations: ['user']})
+            const products = await this.productRepository.find({ where: { user: userId }, relations: ['user']})
             return products.map(product => this.toResponceObject(product));
         } catch (e) {
             throw new UnprocessableEntityException(e.message);

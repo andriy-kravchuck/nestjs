@@ -7,6 +7,7 @@ import { UserEntity } from '../user/user.entity';
 import { ProductEntity } from '../product/product.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserGuard } from '../user/guards/user.guard';
 
 @Controller('product')
 export class ProductController {
@@ -16,15 +17,15 @@ export class ProductController {
         @InjectRepository(ProductEntity)
         private productRepositiry: Repository<ProductEntity>) { }
     
-    @UseGuards(ProductGuard)
+    @UseGuards(UserGuard)
     @HttpCode(HttpStatus.OK)
     @Get()
-    async findAll() {
-        return this.productService.findAll();
+    async findAll(@UserDecorator('id') user) {
+        return this.productService.findAll(user);
     }
 
     @HttpCode(HttpStatus.CREATED)
-    @UseGuards(ProductGuard)
+    @UseGuards(UserGuard)
     @Post()
     async create(@UserDecorator('id') user,  @Body() data: CreateProductDTO) {
         return this.productService.create(user, data);

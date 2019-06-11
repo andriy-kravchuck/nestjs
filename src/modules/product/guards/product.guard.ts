@@ -5,7 +5,6 @@ import { Injectable,
         HttpStatus,
         UnauthorizedException,
         UnprocessableEntityException,
-        NotFoundException 
     } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -29,16 +28,12 @@ export class ProductGuard implements CanActivate {
         }
 
         request.user = await this.validateToken(request.headers.authorization);
-
-        if (!request.params.id) {
-            throw new NotFoundException('Product with this Id doesn\'t exist');
-        }
-
+        
         try {
             const user = await this.userRepositiry.findOne(request.user.id);
             const product = await this.productRepositiry.findOne({ where: { id: [request.params.id]}, relations: ['user']});
 
-            if (user.role === 'user') {
+            if (user.role === 'user' && product) {
                 if (product.user.id !== user.id) {
                     throw new UnauthorizedException('This product does not belong to this user')
                 }

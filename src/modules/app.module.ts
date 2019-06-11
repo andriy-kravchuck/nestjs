@@ -6,9 +6,8 @@ import { HandlebarsAdapter, MailerModule } from '@nest-modules/mailer';
 import { HttpErrorFilter } from '../shared/http-error.filter';
 import { LoggingInterceptor } from '../shared/logging.interceptor';
 import { AppService } from './app.service';
-import { DatabaseModule } from '../config/development.config';
+import { DatabaseModule } from '../config/database.config';
 import { ProductModule } from './product/product.module';
-// import * as dev from '../config/development.config';
 
 const SendMail = MailerModule.forRootAsync({
   useFactory: () => ({
@@ -28,7 +27,7 @@ const SendMail = MailerModule.forRootAsync({
 
 
 @Module({
-  imports: [DatabaseModule, UserModule, SendMail, ProductModule],
+  imports: [ DatabaseModule, UserModule, SendMail, ProductModule],
   providers: [
     {
       provide: APP_FILTER,

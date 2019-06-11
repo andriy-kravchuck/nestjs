@@ -1,4 +1,8 @@
-import { Injectable, HttpStatus, UnprocessableEntityException, ForbiddenException, BadGatewayException, BadRequestException } from '@nestjs/common';
+import { Injectable, 
+        HttpStatus, 
+        UnprocessableEntityException, 
+        BadRequestException,
+    } from '@nestjs/common';
 import { UserEntity } from './user/user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';

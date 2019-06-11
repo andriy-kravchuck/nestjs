@@ -1,5 +1,4 @@
-import { validate, IsString, IsEmail, MinLength, MaxLength, IsOptional, IsNumber } from 'class-validator';
-import { Unique } from 'typeorm';
+import { IsString, MinLength, IsNumber } from 'class-validator';
 
 export class CreateProductDTO {
     @IsString()

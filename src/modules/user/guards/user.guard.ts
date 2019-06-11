@@ -3,13 +3,8 @@ import { Injectable,
         ExecutionContext,
         HttpException,
         HttpStatus,
-        UnauthorizedException,
-        UnprocessableEntityException 
     } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
-import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity, ProductEntity } from 'src/models';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserGuard implements CanActivate {
@@ -21,20 +16,6 @@ export class UserGuard implements CanActivate {
         }
 
         request.user = await this.validateToken(request.headers.authorization);
-
-        // try {
-        //     const user = await this.userRepositiry.findOne(request.user.id);
-        //     const product = await this.productRepositiry.findOne({ where: { id: [request.params.id]}, relations: ['user']});
-
-        //     if (user.role === 'user') {
-        //         if (product.user.id !== user.id) {
-        //             throw new UnauthorizedException('This product does not belong to this user')
-        //         }
-        //     }
-
-        // } catch (e) {
-        //     throw new UnprocessableEntityException(e.message);
-        // }
 
         return true;
     }

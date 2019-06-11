@@ -1,4 +1,9 @@
-import { Injectable, HttpException, HttpStatus, UnprocessableEntityException, UnauthorizedException, NotFoundException } from '@nestjs/common';
+import { Injectable, 
+        HttpStatus, 
+        UnprocessableEntityException, 
+        UnauthorizedException, 
+        NotFoundException 
+    } from '@nestjs/common';
 import { UserEntity } from './user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,11 +14,13 @@ import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserService {
-    constructor(@InjectRepository(UserEntity) private userRepositiry: Repository<UserEntity>) { }
+    constructor(
+        @InjectRepository(UserEntity) 
+        private userRepositiry: Repository<UserEntity>) { }
 
     async findAll() {
         try {
-            const users = await this.userRepositiry.find();
+            const users = await this.userRepositiry.find({relations: ['products']});
             return users.map(el => el.toResponseObject());
         } catch (e) {
             throw new UnprocessableEntityException(e.message);
@@ -22,7 +29,7 @@ export class UserService {
 
     async findOne(id: string) {
         try {
-            const user = await this.userRepositiry.findOne({ id });
+            const user = await this.userRepositiry.findOne({ where: {id}, relations: ['products'] });
             return user.toResponseObject();
         } catch (e) {
             throw new UnprocessableEntityException(e.message);
