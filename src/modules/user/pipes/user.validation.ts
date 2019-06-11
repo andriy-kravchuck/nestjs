@@ -1,4 +1,9 @@
-import { PipeTransform, Injectable, ArgumentMetadata, HttpStatus, HttpException } from '@nestjs/common';
+import { PipeTransform, 
+        Injectable, 
+        ArgumentMetadata, 
+        HttpStatus, 
+        HttpException 
+    } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 
@@ -27,7 +32,6 @@ export class ValidationPipe implements PipeTransform<any> {
 
     private formatErrors(errors: any[]) {
         return errors.map(err => {
-            // tslint:disable-next-line:forin
             for (const property in err.constaints)  {
                 return err.constaints[property];
             }

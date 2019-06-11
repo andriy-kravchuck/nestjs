@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Res, HttpStatus, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpStatus, HttpCode } from '@nestjs/common';
 import { AppService } from './app.service';
 import { ForgotPasswordDTO, ChangePasswordDTO } from './user/dto/password.dto';
 
@@ -8,10 +8,16 @@ export class AppController {
 
   @HttpCode(HttpStatus.OK)
   @Get()
-  getHello(): string {
+  getHello() {
     return this.appService.getHello();
   }
   
+  @HttpCode(HttpStatus.CREATED)
+  @Post()
+  getHello2(): string {
+    return this.appService.getHello();
+  }
+
   @HttpCode(HttpStatus.OK)
   @Post('change-password')
   async changePass(@Body() data: ChangePasswordDTO) {

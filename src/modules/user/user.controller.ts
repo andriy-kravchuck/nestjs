@@ -5,7 +5,9 @@ import { UpdateUserDTO } from './dto/user.dto';
 import { LoginUserDTO } from './dto/password.dto';
 import { UserGuard } from './guards/user.guard';
 import { UserDecorator } from './decorators/user.decorator';
-import { validationError } from 'src/utils/common';
+import { validationError } from '../../utils/common';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 
 @Controller('user')
@@ -14,7 +16,7 @@ export class UserController {
 
     @HttpCode(HttpStatus.OK)
     @Get()
-    @UseGuards(new UserGuard())
+    @UseGuards(UserGuard)
     async findAll(@UserDecorator() user) {
         return this.userService.findAll();
     }
@@ -22,24 +24,25 @@ export class UserController {
     @HttpCode(HttpStatus.CREATED)
     @Post('register')
     async create(@Body() data: CreateUserDTO) {
+        // return data;
         return this.userService.addUser(data);
     }
 
     @HttpCode(HttpStatus.OK)
     @Get(':id')
-    findById(@Param('id') id: number) {
+    findById(@Param('id') id: string) {
         return this.userService.findOne(id);
     }
 
     @HttpCode(HttpStatus.OK)
     @Put(':id')
-    async update(@Param('id') id: number, @Body() data: UpdateUserDTO) {
+    async update(@Param('id') id: string, @Body() data: UpdateUserDTO) {
         return this.userService.updateUser(id, data);
     }
 
     @HttpCode(HttpStatus.OK)
     @Delete(':id')
-    remove(@Param('id') id: number): object {
+    remove(@Param('id') id: string): object {
         return this.userService.destroyUser(id);
     }
 

@@ -1,4 +1,8 @@
-import { validate, IsString, IsEmail, MinLength, MaxLength, IsOptional } from 'class-validator';
+import { IsString, 
+        IsEmail, 
+        MinLength, 
+        MaxLength,
+    } from 'class-validator';
 import { Unique } from 'typeorm';
 
 export class UpdateUserDTO {

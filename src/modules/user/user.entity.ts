@@ -1,12 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Unique, Column, CreateDateColumn, BeforeInsert, BeforeUpdate, AfterUpdate, AfterInsert, AfterLoad } from 'typeorm';
-import * as bcrypt from 'bcryptjs';
-import * as jwt from 'jsonwebtoken';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, BeforeInsert, OneToMany } from 'typeorm';
+import * as bcrypt from "bcryptjs";
+import * as jwt from "jsonwebtoken";
+import { ProductEntity } from '../product/product.entity';
 
 @Entity('users')
 export class  UserEntity {
 
     @PrimaryGeneratedColumn('uuid')
-    id: number;
+    id: string;
 
     @Column({ type: 'text', nullable: false})
     firstName: string;
@@ -32,6 +33,9 @@ export class  UserEntity {
     @Column({ type: 'boolean', default: false, nullable: true})
     active: boolean;
 
+    @OneToMany(type => ProductEntity, product => product.user)
+    products: ProductEntity[];
+
     @CreateDateColumn()
     created: Date;
 
@@ -40,22 +44,18 @@ export class  UserEntity {
         this.password = await bcrypt.hash(this.password, 10);
     }
 
-    async toResponseObject(showToken: boolean = true) {
-        const {id, firstName, lastName, email, phoneNumber, role, created, token} = this;
-        if (showToken) {
-            return {id, firstName, lastName, email, phoneNumber, role, created, token};
-        }
-
-        return {id, firstName, lastName, email, phoneNumber, role, created};
+    toResponseObject(showToken: boolean = false) {
+        const { active, password, token, ...rest } = this;
+    
+        return showToken ? { ...rest, token } : rest;
     }
 
     async comparePassword(attempt: string) {
-        // return attempt;
         return await bcrypt.compare(attempt, this.password);
     }
 
     private get token() {
         const {id, email} = this;
-        return jwt.sign({id, email}, process.env.SECRET, {expiresIn: '7d'});
+        return jwt.sign({id, email}, 'secret', {expiresIn: '7d'});
     }
 }

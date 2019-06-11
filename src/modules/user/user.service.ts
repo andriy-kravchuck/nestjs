@@ -1,27 +1,36 @@
-import { Injectable, HttpException, HttpStatus, UnprocessableEntityException, UnauthorizedException, NotFoundException } from '@nestjs/common';
+import { Injectable, 
+        HttpStatus, 
+        UnprocessableEntityException, 
+        UnauthorizedException, 
+        NotFoundException 
+    } from '@nestjs/common';
 import { UserEntity } from './user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDTO, UpdateUserDTO } from './dto/user.dto';
 import { LoginUserDTO } from './dto/password.dto';
-import { validationError } from 'src/utils/common';
+import { validationError } from '../../utils/common';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserService {
-    constructor(@InjectRepository(UserEntity) private userRepositiry: Repository<UserEntity>) { }
+    constructor(
+        @InjectRepository(UserEntity) 
+        private userRepositiry: Repository<UserEntity>) { }
 
     async findAll() {
         try {
-            return await this.userRepositiry.find();
+            const users = await this.userRepositiry.find({relations: ['products']});
+            return users.map(el => el.toResponseObject());
         } catch (e) {
             throw new UnprocessableEntityException(e.message);
         }
     }
 
-    async findOne(id: number) {
+    async findOne(id: string) {
         try {
-            return await this.userRepositiry.findOne({ id });
+            const user = await this.userRepositiry.findOne({ where: {id}, relations: ['products'] });
+            return user.toResponseObject();
         } catch (e) {
             throw new UnprocessableEntityException(e.message);
         }
@@ -34,23 +43,26 @@ export class UserService {
             const user = await this.userRepositiry.create(data);
             await this.userRepositiry.save(user);
 
-            return user.toResponseObject(false)
+            return user.toResponseObject()
         } catch (e) {
-            throw new UnprocessableEntityException(e.message);
+            throw new UnprocessableEntityException(e);
         }
     }
 
-    async updateUser(id: number, data: UpdateUserDTO) {
+    async updateUser(id: string, data: UpdateUserDTO) {
         await validationError(UpdateUserDTO, data)
 
-        try {
+        if (data.password) {
             data.password = await bcrypt.hash(data.password, 10);;
+        }
+
+        try {
             await this.userRepositiry.update({ id }, data);
 
             const user = await this.userRepositiry.findOne({ id });
 
             if (user) {
-                return user.toResponseObject(false);
+                return user.toResponseObject();
             }
 
             throw new UnprocessableEntityException('User with this id not exist');
@@ -59,7 +71,7 @@ export class UserService {
         }
     }
 
-    async destroyUser(id: number) {
+    async destroyUser(id: string) {
         try {
             await this.userRepositiry.delete({id});
             return { meaasages: 'deleted success', status: HttpStatus.OK };
@@ -81,7 +93,7 @@ export class UserService {
             }
 
             if (await user.comparePassword(password)) {
-                return user.toResponseObject();
+                return user.toResponseObject(true);
             }
             const message = 'Invalid username/passwrod';
             throw new UnauthorizedException(message);
